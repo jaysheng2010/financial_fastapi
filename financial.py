@@ -71,8 +71,9 @@ async def plot(request: Request):
     plt.savefig(buf, format="png")
     buf.seek(0)
     img = base64.b64encode(buf.read()).decode()
+    id = json_data["symbol"] + str(years)
     print(img)
     print(json_data["symbol"])
-    return {"img_string": str(img), "title": str(json_data["symbol"]), "csrf": json_data["csrf"]}
+    return {"img_string": str(img), "title": str(json_data["symbol"]), "csrf": json_data["csrf"], "id": id}
 
 #uvicorn main:app --host 0.0.0.0 --port $PORT
