@@ -42,7 +42,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # Allow all origins (good for development)
+    allow_origins=["https://financial-graph-app-html.onrender.com"],          # Allow all origins (good for development)
     allow_credentials=False,
     allow_methods=["POST", "OPTIONS"],
     allow_headers=["*"],
