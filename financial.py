@@ -16,7 +16,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 
 apikey = "8f7cc74778c6437c9fb12d63272f80c8"
 
-def fetch_data(symbol,interval,outputsize):
+def fetch_data(symbol,interval,outputsize, pattern):
     url =  "https://api.twelvedata.com/time_series"
     params = {
         "symbol": symbol,
