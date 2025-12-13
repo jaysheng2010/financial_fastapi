@@ -73,7 +73,7 @@ async def plot(request: Request):
     elif (number >= 2 and time_type == "year"):
         time_used = "1month"
         times = 12
-        pattern = "%Y-%m"
+        pattern = "%Y-%m-%d"
     elif (number >= 9 and time_type == "month"):
         time_used = "1week"
         times = 4
