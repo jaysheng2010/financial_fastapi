@@ -27,13 +27,11 @@ def fetch_data(symbol,interval,outputsize):
 
     res = re.get(url,params=params)
     data = dict(res.json())
-    print(data)
     points = []
     date = []
     for x in data["values"]:
         points.append(float(x["close"]))
-        date_str = x["datetime"].split(" ")[0] 
-        date.append(d.datetime.strptime(date_str, "%Y-%m-%d"))
+        date.append(d.datetime.strptime(x["datetime"], pattern))
     points.reverse()
     date.reverse()
     return points, date
@@ -60,20 +58,56 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 @app.post("/", response_class=JSONResponse)
 async def plot(request: Request):
     json_data = await request.json()
-    years = json_data["years"]
-    points, date = fetch_data(json_data["symbol"], "1month", str(years*12))
-    fig, ax = plt.subplots(figsize=(12,5))
+    time_type = json_data["time_type"]
+    number = json_data["number"]
+
+    time_used = ""
+    times = 0
+    pattern = ""
+
+    if (number < 2 and time_type == "year"):
+        time_used = "1day"
+        times = 365
+        pattern = "%Y-%m-%d"
+    elif (number >= 2 and time_type == "year"):
+        time_used = "1month"
+        times = 12
+        pattern = "%Y-%m"
+    elif (number >= 9 and time_type == "month"):
+        time_used = "1week"
+        times = 4
+        pattern = "%Y-%m-%d"
+    elif (number < 9 and time_type == "month"):
+        time_used = "1day"
+        times = 30
+        pattern = "%Y-%m-%d"
+    elif (time_type == "day"):
+        time_used = "1h"
+        times = 24
+        pattern = "%Y-%m-%d %H:%M:%S"
+    elif (time_type == "hour"):
+        time_used = "1min"
+        times = 60
+        pattern = "%Y-%m-%d %H:%M:%S"
+    else: 
+        time_used = None
+        return {"interval":time_used}
+
+    points, date = fetch_data(json_data["symbol"], time_used, str(number*times), pattern)
+    
+    fig, ax = plt.subplots(figsize=(14,5))
     ax.plot(date, points)
-    plt.grid(True)
+    plt .grid(True)
     fig.tight_layout()
     #fig.autofmt_xdate()
     buf = io.BytesIO()
-    plt.savefig(buf, format="png")
+    fig.savefig(buf, format="png")
     buf.seek(0)
     img = base64.b64encode(buf.read()).decode()
-    id = json_data["symbol"] + str(years)
     print(img)
-    plt.close(fig)
-    return {"img_string": str(img), "title": str(json_data["symbol"]), "csrf": json_data["csrf"], "id": id}
 
+    plt.close(fig)
+    del fig, ax
+    gc.collect()
+    return {"img_string": str(img), "title": f'{str(json_data["symbol"])} {str(number)}{time_type}', "interval":time_used}
 #uvicorn main:app --host 0.0.0.0 --port $PORT
