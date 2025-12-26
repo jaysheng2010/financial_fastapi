@@ -93,9 +93,6 @@ def intersection_true(intersection, time_used, number, times, pattern):
     intersection.pop(0)
     for x in intersection:
         points, date = fetch_data(f"{x}/{exchange_to}", time_used, str(number*times), pattern)
-        for z,y in zip(points, date):
-          print(z,y)
-          print("\n")
         ax.plot(date, points, label=x, color=color_dict[x])
 
     plt.grid(True)
@@ -110,7 +107,7 @@ def intersection_true(intersection, time_used, number, times, pattern):
     plt.close(fig)
     del fig, ax
     gc.collect()
-    return img, points, date
+    return img
 
 
 @limiter.limit("20/minute")
@@ -160,7 +157,7 @@ async def plot(request: Request):
      img = none_intersect(date, points)
      return {"img_string": str(img), "title": f'{str(json_data["symbol"])} {str(number)} {time_type}', "interval":time_used, "id": f"{''.join(map(str, random.sample(range(1, 50), 5)))}"}
     elif type(intersection) == list:
-        img, x, y = intersection_true(intersection, time_used, number, times, pattern)
+        img = intersection_true(intersection, time_used, number, times, pattern)
         symbols = ", ".join(json_data["symbol"])
         return {"img_string": str(img), "title": f'{symbols} to {exchange_to} in {str(number)} {time_type}', "interval":time_used, "id": f"{''.join(map(str, random.sample(range(1, 50), 5)))}"}
     else: 
@@ -169,4 +166,5 @@ async def plot(request: Request):
   except Exception as e:
       print(e)
       return str(e)
+      
 #uvicorn financial:app --host 0.0.0.0 --port $PORT
