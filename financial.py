@@ -28,8 +28,9 @@ color_dict = {
     "CAD": "#EA00FF", # pink
     "JPY": "#FF7B00", # orange
     "USD": "#1C1B1B", # black
-    "HKD":"#27BBF5", # light bue
-    "EUR": "#07749C"
+    "HKD": "#27BBF5", # light bue
+    "EUR": "#07749C",
+    "GBP": "#9E946A"
 }
 
 def fetch_data(symbol,interval,outputsize, pattern):
