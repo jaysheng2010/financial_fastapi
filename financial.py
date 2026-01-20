@@ -60,8 +60,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],          # Allow all origins (good for development)
     allow_credentials=False,
-    allow_methods=["POST", "OPTIONS"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 limiter = Limiter(key_func=get_remote_address)
