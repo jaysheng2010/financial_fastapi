@@ -167,5 +167,11 @@ async def plot(request: Request):
   except Exception as e:
       print(e)
       return str(e)
-      
+
+@limiter.limit("20/minute")
+@app.post("/", response_class=PlainTextResponse)
+def wake():
+    return "Wake"
+
+
 #uvicorn financial:app --host 0.0.0.0 --port $PORT
