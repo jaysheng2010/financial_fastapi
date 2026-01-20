@@ -169,7 +169,7 @@ async def plot(request: Request):
       return str(e)
 
 @limiter.limit("20/minute")
-@app.post("/", response_class=PlainTextResponse)
+@app.post("/wake", response_class=PlainTextResponse)
 def wake():
     return "Wake"
 
